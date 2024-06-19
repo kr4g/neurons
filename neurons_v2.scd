@@ -34,10 +34,10 @@ s.reboot;
 // 2b. Sanity checks
 (
 Routine({
-	("Labels size: " ++ ~labels.size).postln;       // 131
-	("Rates size: " ++ ~rates.size).postln;         // (131, 180000)
-	("Spikes size: " ++ ~spikes.size).postln;       // (131, 180000)
-	("Density size:" ++ ~density.size).postln;      // 180000
+	("Labels size:     " ++ ~labels.size).postln;   // 131
+	("Rates size:      " ++ ~rates.size).postln;    // (131, 180000)
+	("Spikes size:     " ++ ~spikes.size).postln;   // (131, 180000)
+	("Density size:    " ++ ~density.size).postln;  // 180000
 	("Avg. Rates size: " ++ ~avgRates.size).postln; // 180000
 }).play;
 )
@@ -69,7 +69,7 @@ Buffer.freeAll;
 				if (freq < 576,
 					{
 						if (freq < 108,
-							// {out = rrand(16,17)},
+							{out = rrand(16,17)},
 							{out = rrand(0,15)}
 						);
 					},
@@ -118,7 +118,7 @@ thisProcess.openPorts;
 (
 s.bind { ~fx = Synth.tail(nil, \reverb); };
 // s.bind { ~fx.free; };
-s.bind { ~droneSynth = Synth(\drone, [\amp, -28.dbamp]); };
+s.bind { ~droneSynth = Synth(\drone, [\amp, -8.dbamp]); };
 
 OSCdef(\receiver, {
 	arg msg;
