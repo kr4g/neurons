@@ -28,9 +28,10 @@ s.reboot;
 // 1. SynthDefs
 (~projectPath ++ "synthdefs.scd").load;
 
-// 2. Load buffers (this may take a minute)
+// 2a. Load buffers (this may take a minute)
 (~projectPath ++ "loadbuffers.scd").load;
 
+// 2b. Sanity checks
 ~labels.size;   // 131
 ~rates.size;    // (131, 180000)
 ~spikes.size;   // (131, 180000)
