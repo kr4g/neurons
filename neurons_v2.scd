@@ -1,21 +1,18 @@
 /*
 "PROTONOESIS 1"
-
-neurons.scd
-
 */
 
-// 0. Init Server
+// 0a. Init Server
 (
 Server.killAll;
 Buffer.freeAll;
 s = Server.local;
 // ServerOptions.devices;
 s.options.outDevice_(
-	// "MacBook Pro Speakers"
+	"MacBook Pro Speakers"
 	// "External Headphones"
 	// "Scarlett 4i4 USB"
-	"MME : Out 1-24 (MOTU Pro Audio)"
+	// "MME : Out 1-24 (MOTU Pro Audio)"
 );
 s.options.inDevice_("Built-in Microph");
 s.options.numOutputBusChannels_(18);
@@ -25,16 +22,14 @@ s.options.memSize_(2.pow(20));
 s.reboot;
 )
 
-// 1. SynthDefs
-"C:\\Users\\transTeam\\Desktop\\neurons-main\\neurons-main\\synthdefs.scd".load;
+// 0b. Get project path
+~projectPath = PathName.new(thisProcess.nowExecutingPath).parentPath;
 
-q = Synth(\drone, [\amp, -6.dbamp]);
-q.set(\amp, -2.dbamp);
-q.set(\lpfFreq, 9000);
-q.free;
+// 1. SynthDefs
+(~projectPath ++ "synthdefs.scd").load;
 
 // 2. Load buffers (this may take a minute)
-"C:\\Users\\transTeam\\Desktop\\neurons-main\\neurons-main\\loadbuffers.scd".load;
+(~projectPath ++ "loadbuffers.scd").load;
 
 ~labels.size;   // 131
 ~rates.size;    // (131, 180000)
@@ -106,14 +101,19 @@ Buffer.freeAll;
 }
 )
 
+// 4. Open UDP Ports
+(
 thisProcess.openUDPPort(2345);
 thisProcess.openUDPPort(1234);
 thisProcess.openPorts;
+)
 
-s.bind { ~fx = Synth.tail(nil, \reverb); };
-s.bind { ~fx.free; };
-s.bind { ~droneSynth = Synth(\drone, [\amp, -28.dbamp]); };
+// 5. Activate
 (
+s.bind { ~fx = Synth.tail(nil, \reverb); };
+// s.bind { ~fx.free; };
+s.bind { ~droneSynth = Synth(\drone, [\amp, -28.dbamp]); };
+
 OSCdef(\receiver, {
 	arg msg;
 	var idx = msg[1];
@@ -137,22 +137,17 @@ Routine({
 }).play;
 )
 
-
-(
-Routine({
-	180000.do { |i|
-		var density = ~density[i];
-		var avgRate = ~avgRates[i];
-		// i.postln;
-		NetAddr("192.168.50.253", 10000).sendMsg("/avgRate", avgRate);
-		NetAddr("192.168.50.253", 10000).sendMsg("/density", density);
-		NetAddr("192.168.50.138", 10000).sendMsg("/avgRate", avgRate);
-		NetAddr("192.168.50.138", 10000).sendMsg("/density", density);
-		(32/1000).wait;
-	};
-}).play;
-)
-
-
-
-
+// (
+// Routine({
+// 	180000.do { |i|
+// 		var density = ~density[i];
+// 		var avgRate = ~avgRates[i];
+// 		// i.postln;
+// 		NetAddr("192.168.50.253", 10000).sendMsg("/avgRate", avgRate);
+// 		NetAddr("192.168.50.253", 10000).sendMsg("/density", density);
+// 		NetAddr("192.168.50.138", 10000).sendMsg("/avgRate", avgRate);
+// 		NetAddr("192.168.50.138", 10000).sendMsg("/density", density);
+// 		(32/1000).wait;
+// 	};
+// }).play;
+// )
