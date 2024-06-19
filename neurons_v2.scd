@@ -32,15 +32,20 @@ s.reboot;
 (~projectPath ++ "loadbuffers.scd").load;
 
 // 2b. Sanity checks
-~labels.size;   // 131
-~rates.size;    // (131, 180000)
-~spikes.size;   // (131, 180000)
-~density.size;  // 180000
-~avgRates.size; // 180000
+(
+Routine({
+	("Labels size: " ++ ~labels.size).postln;       // 131
+	("Rates size: " ++ ~rates.size).postln;         // (131, 180000)
+	("Spikes size: " ++ ~spikes.size).postln;       // (131, 180000)
+	("Density size:" ++ ~density.size).postln;      // 180000
+	("Avg. Rates size: " ++ ~avgRates.size).postln; // 180000
+}).play;
+)
 
+// 2c. Free buffers
 Buffer.freeAll;
 
-// 3. Playback and interaction functions
+// 3. Playback and interaction function(s)
 (
 ~playNeurons = {
 	arg index = 0;
@@ -122,6 +127,9 @@ OSCdef(\receiver, {
 	~playNeurons.(idx);
 }, '/index')
 )
+
+
+
 
 // TEST
 (
