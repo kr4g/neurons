@@ -117,7 +117,6 @@ thisProcess.openPorts;
 // 5. Activate
 (
 s.bind { ~fx = Synth.tail(nil, \reverb); };
-// s.bind { ~fx.free; };
 s.bind { ~droneSynth = Synth(\drone, [\amp, -8.dbamp]); };
 
 OSCdef(\receiver, {
